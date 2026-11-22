@@ -1,0 +1,68 @@
+# =============================================================================
+# Live Presentation Coach - Python requirements for Windows 10/11 (64-bit, x86_64)
+# =============================================================================
+# Python:   3.12, 64-bit, from python.org (tick "Add python.exe to PATH").
+#           Check before installing:  py -3.12 -c "import platform; print(platform.machine())"
+#           must print  AMD64.
+# Also needed: Microsoft Visual C++ Redistributable (x64), latest - torch and
+#           onnxruntime need it. Install with:  winget install Microsoft.VCRedist.2015+.x64
+#
+# Setup (PowerShell):
+#   py -3.12 -m venv .venv
+#   .\.venv\Scripts\Activate.ps1
+#   python -m pip install --upgrade pip
+#   pip install -r requirements-windows.txt
+#
+# Not installed by pip (install separately):
+#   winget install Gyan.FFmpeg   # audio conversion CLI
+#
+# Checked on 2026-11-21 (updated: sherpa-onnx runtime): every package below (and its dependencies) resolves
+# with a prebuilt win_amd64 wheel for Python 3.12 - no compiler needed.
+# Versions match requirements-mac.txt so Mac and Windows teammates get
+# the same results.
+# =============================================================================
+
+# --- Speech recognition engines ---------------------------------------------
+sherpa-onnx==2.0.2           # English engine: Nemotron Streaming EN (int8) + Silero VAD, on CPU
+faster-whisper==1.2.1        # Bahasa engine (Balanced tier): Whisper on CPU via CTranslate2
+whisperlivekit==0.2.26       # Whisper streaming wrapper (SimulStreaming / LocalAgreement) + WebSocket server
+torch==2.15.0                # Required by whisperlivekit (default PyPI build = CPU-only, fine for this app)
+torchaudio==2.11.1           # Works with torch 2.11 and every later torch release
+huggingface-hub==2.4.0       # Download Whisper models (Bahasa mode, CrisperWhisper)
+
+# --- Web server (backend <-> browser) ---------------------------------------
+fastapi==0.165.0
+uvicorn[standard]==0.54.0    # uvloop is skipped automatically on Windows
+websockets==17.4
+
+# --- Audio I/O and features --------------------------------------------------
+numpy==2.5.5
+soundfile==0.14.0            # Read/write WAV (bundles libsndfile)
+librosa==1.0.1               # Resampling, RMS loudness, pitch (F0) for stretch features
+sounddevice==0.5.6           # Mic capture for command-line testing (bundles PortAudio)
+
+# --- Coaching analysers ------------------------------------------------------
+rapidfuzz==3.14.6            # Script follower: fuzzy word alignment
+
+# --- Evaluation and analysis -------------------------------------------------
+jiwer==4.0.0                 # WER / CER
+pandas==3.1.1
+matplotlib==3.11.2
+
+# --- Script / slide import ---------------------------------------------------
+pymupdf==2.1                 # Extract text from PDF slides
+python-pptx==1.0.2           # Extract text from PowerPoint slides
+
+# --- Development -------------------------------------------------------------
+pytest==9.2.0
+ipykernel==7.4.0             # Jupyter notebooks in VS Code for experiment analysis
+
+# --- Deliberately NOT included -----------------------------------------------
+# mlx-whisper: Apple Silicon only.
+# onnxruntime-directml: GPU build for Windows, but it clashes with the regular
+#   onnxruntime that faster-whisper needs - never install both in one venv.
+#   The English engine runs fine on CPU, so it is not needed.
+# Accurate tier on Windows (Whisper on an AMD/Intel GPU): use a whisper.cpp
+#   Vulkan build (a separate program, not a pip package). Optional, phase 4.
+# nemo_toolkit: only for the one-off reference run of the official Nemotron
+#   checkpoint. It is heavy and Linux-first - run it in Google Colab instead.

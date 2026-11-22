@@ -1,0 +1,60 @@
+# =============================================================================
+# Live Presentation Coach - Python requirements for macOS on Apple Silicon (M1-M4)
+# =============================================================================
+# Python:   3.12, native arm64 build (python.org installer, Homebrew, or uv).
+#           Check before installing:  python3 -c "import platform; print(platform.machine())"
+#           must print  arm64  (x86_64 means Python is running under Rosetta - reinstall).
+# macOS:    14 Sonoma or newer (onnxruntime, torch and mlx wheels need macOS 14+).
+#
+# Setup:
+#   python3.12 -m venv .venv
+#   source .venv/bin/activate
+#   pip install --upgrade pip
+#   pip install -r requirements-mac.txt
+#
+# Not installed by pip (install separately):
+#   brew install ffmpeg          # audio conversion CLI
+#
+# Checked on 2026-11-21 (updated: sherpa-onnx runtime): every package below (and its dependencies) resolves
+# with a prebuilt macOS arm64 wheel for Python 3.12 - no compiling needed.
+# =============================================================================
+
+# --- Speech recognition engines ---------------------------------------------
+sherpa-onnx==2.0.2           # English engine: Nemotron Streaming EN (int8) + Silero VAD, on CPU
+faster-whisper==1.2.1        # Bahasa engine (Balanced tier): Whisper on CPU via CTranslate2
+whisperlivekit==0.2.26       # Whisper streaming wrapper (SimulStreaming / LocalAgreement) + WebSocket server
+mlx-whisper==0.4.3           # Bahasa engine (Accurate tier): Whisper on the Apple Silicon GPU via MLX
+torch==2.15.0                # Required by whisperlivekit (uses Apple GPU via MPS)
+torchaudio==2.11.1           # Works with torch 2.11 and every later torch release
+huggingface-hub==2.4.0       # Download Whisper models (Bahasa mode, CrisperWhisper)
+
+# --- Web server (backend <-> browser) ---------------------------------------
+fastapi==0.165.0
+uvicorn[standard]==0.54.0
+websockets==17.4
+
+# --- Audio I/O and features --------------------------------------------------
+numpy==2.5.5
+soundfile==0.14.0            # Read/write WAV (bundles libsndfile)
+librosa==1.0.1               # Resampling, RMS loudness, pitch (F0) for stretch features
+sounddevice==0.5.6           # Mic capture for command-line testing (bundles PortAudio)
+
+# --- Coaching analysers ------------------------------------------------------
+rapidfuzz==3.14.6            # Script follower: fuzzy word alignment
+
+# --- Evaluation and analysis -------------------------------------------------
+jiwer==4.0.0                 # WER / CER
+pandas==3.1.1
+matplotlib==3.11.2
+
+# --- Script / slide import ---------------------------------------------------
+pymupdf==2.1                 # Extract text from PDF slides
+python-pptx==1.0.2           # Extract text from PowerPoint slides
+
+# --- Development -------------------------------------------------------------
+pytest==9.2.0
+ipykernel==7.4.0             # Jupyter notebooks in VS Code for experiment analysis
+
+# --- Deliberately NOT included -----------------------------------------------
+# nemo_toolkit: only for the one-off reference run of the official Nemotron
+#   checkpoint. It is heavy and Linux-first - run it in Google Colab instead.

@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Voace - Presentation Coach</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>Voace</h1>
+    <span id="status" class="status">Idle</span>
+    <span id="latency" class="latency"></span>
+  </header>
+
+  <main>
+    <section id="setup" class="card">
+      <h2>New rehearsal</h2>
+      <label>Language
+        <select id="lang">
+          <option value="en">English</option>
+          <option value="id" disabled>Bahasa campur (coming soon)</option>
+        </select>
+      </label>
+      <label>Target duration (minutes)
+        <input id="target" type="number" min="1" max="60" value="5">
+      </label>
+      <label>Feedback
+        <select id="level">
+          <option value="full">Full - captions and meters</option>
+          <option value="minimal">Minimal - alerts only</option>
+          <option value="silent">Silent - report only</option>
+        </select>
+      </label>
+      <label>Filler words (comma-separated)
+        <textarea id="fillers" rows="2"></textarea>
+      </label>
+      <button id="start">Start rehearsal</button>
+      <p id="error" class="error" hidden></p>
+    </section>
+
+    <section id="live" hidden>
+      <div class="meters">
+        <div class="meter"><span class="label">Time</span><b id="m-time">0:00</b><small id="m-time-sub"></small></div>
+        <div class="meter detail"><span class="label">Pace</span><b id="m-wpm">-</b><small>wpm · <span id="m-sps">-</span> syl/s</small></div>
+        <div class="meter detail"><span class="label">Fillers</span><b id="m-fillers">0</b><small id="m-fillers-sub"></small></div>
+        <div class="meter detail"><span class="label">Pauses</span><b id="m-pauses">0</b><small id="m-pauses-sub"></small></div>
+      </div>
+      <div id="nudge" class="nudge" hidden></div>
+      <div id="captions" class="captions detail"><span id="final"></span> <span id="partial"></span></div>
+      <button id="stop">Stop and see report</button>
+    </section>
+
+    <section id="report" class="card" hidden></section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
